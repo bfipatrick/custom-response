@@ -2,8 +2,11 @@ package com.example.customresponse.controller;
 
 import com.example.customresponse.entity.DummyEntity;
 import com.example.customresponse.service.DummyService;
+import com.example.customresponse.utls.ApiUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,17 +20,19 @@ public class DummyController {
     DummyService dummyService;
 
     @GetMapping("/ok")
-    public DummyEntity doSomething(){
-        return dummyService.doSomething();
+    public ResponseEntity<Object> doSomething(){
+        return ApiUtils.generateResponse(HttpStatus.OK, dummyService.doSomething());
     }
 
     @GetMapping("/error")
-    public DummyEntity throwSomething(){
+    public ResponseEntity<Object> throwSomething(){
         try {
-            return dummyService.throwSomething();
+            return ApiUtils.generateResponse(HttpStatus.OK, dummyService.throwSomething());
         }catch (Exception e){
             log.error(e.toString());
-            throw e;
+            return ApiUtils.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+                    HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                    HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
         }
     }
 
